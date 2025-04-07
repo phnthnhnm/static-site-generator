@@ -1,4 +1,5 @@
 import os
+import pathlib
 import shutil
 from block_functions import markdown_to_html_node
 
@@ -47,3 +48,15 @@ def generate_page(from_path, template_path, dest_path):
 
     with open(dest_path, 'w') as dest_file:
         dest_file.write(full_html)
+
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    for entry in os.listdir(dir_path_content):
+        entry_path = os.path.join(dir_path_content, entry)
+        dest_entry_path = os.path.join(dest_dir_path, entry)
+
+        if os.path.isfile(entry_path) and entry_path.endswith(".md"):
+            dest_file_path = str(pathlib.Path(dest_entry_path).with_suffix(".html"))
+            generate_page(entry_path, template_path, dest_file_path)
+        elif not os.path.isfile(entry_path):
+            os.makedirs(dest_entry_path, exist_ok=True)
+            generate_pages_recursive(entry_path, template_path, dest_entry_path)
