@@ -2,6 +2,7 @@ import unittest
 
 from inline_functions import *
 
+
 class TestSplitNodesDelimiter(unittest.TestCase):
     def test_delim_bold(self):
         node = TextNode("This is text with a **bolded** word", TextType.TEXT)
@@ -82,12 +83,14 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             new_nodes,
         )
 
+
 class TestExtractMarkdownImages(unittest.TestCase):
     def test_extract_markdown_images(self):
         matches = extract_markdown_images(
             "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
         )
         self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
 
 class TestExtractMarkdownLinks(unittest.TestCase):
     def test_extract_markdown_links(self):
@@ -101,6 +104,7 @@ class TestExtractMarkdownLinks(unittest.TestCase):
             ],
             matches,
         )
+
 
 class TestSplitNodesImage(unittest.TestCase):
     def test_split_image(self):
@@ -148,6 +152,7 @@ class TestSplitNodesImage(unittest.TestCase):
             new_nodes,
         )
 
+
 class TestSplitNodesLink(unittest.TestCase):
     def test_split_links(self):
         node = TextNode(
@@ -165,6 +170,7 @@ class TestSplitNodesLink(unittest.TestCase):
             ],
             new_nodes,
         )
+
 
 class TestTextToTextNodes(unittest.TestCase):
     def test_text_to_textnodes(self):
@@ -186,6 +192,7 @@ class TestTextToTextNodes(unittest.TestCase):
             ],
             nodes,
         )
+
 
 if __name__ == "__main__":
     unittest.main()

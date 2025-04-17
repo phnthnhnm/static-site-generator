@@ -3,6 +3,7 @@ import pathlib
 import shutil
 from block_functions import markdown_to_html_node
 
+
 def copy_directory(src, dest):
     if os.path.exists(dest):
         shutil.rmtree(dest)
@@ -19,22 +20,24 @@ def copy_directory(src, dest):
             os.mkdir(dest_path)
             copy_directory(src_path, dest_path)
 
+
 def extract_title(markdown):
     for line in markdown.splitlines():
         line = line.strip()
 
-        if line.startswith('# ') and len(line) > 2:
+        if line.startswith("# ") and len(line) > 2:
             return line[2:].strip()
-        
+
     raise Exception("No h1 header found in the markdown content")
+
 
 def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
-    with open(from_path, 'r') as markdown_file:
+    with open(from_path, "r") as markdown_file:
         markdown_content = markdown_file.read()
 
-    with open(template_path, 'r') as template_file:
+    with open(template_path, "r") as template_file:
         template_content = template_file.read()
 
     html_node = markdown_to_html_node(markdown_content)
@@ -42,14 +45,19 @@ def generate_page(from_path, template_path, dest_path, basepath):
 
     title = extract_title(markdown_content)
 
-    full_html = template_content.replace("{{ Title }}", title).replace("{{ Content }}", html_content)
+    full_html = template_content.replace("{{ Title }}", title).replace(
+        "{{ Content }}", html_content
+    )
 
-    full_html = full_html.replace('href="/', f'href="{basepath}').replace('src="/', f'src="{basepath}')
+    full_html = full_html.replace('href="/', f'href="{basepath}').replace(
+        'src="/', f'src="{basepath}'
+    )
 
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
 
-    with open(dest_path, 'w') as dest_file:
+    with open(dest_path, "w") as dest_file:
         dest_file.write(full_html)
+
 
 def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     for entry in os.listdir(dir_path_content):
@@ -61,4 +69,6 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, bas
             generate_page(entry_path, template_path, dest_file_path, basepath)
         elif not os.path.isfile(entry_path):
             os.makedirs(dest_entry_path, exist_ok=True)
-            generate_pages_recursive(entry_path, template_path, dest_entry_path, basepath)
+            generate_pages_recursive(
+                entry_path, template_path, dest_entry_path, basepath
+            )

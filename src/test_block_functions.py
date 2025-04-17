@@ -2,6 +2,7 @@ import unittest
 
 from block_functions import *
 
+
 class TestMarkdownToBlocks(unittest.TestCase):
     def test_markdown_to_blocks(self):
         md = """
@@ -46,6 +47,7 @@ This is the same paragraph on a new line
             ],
         )
 
+
 class TestBlockToBlockType(unittest.TestCase):
     def test_block_to_block_types(self):
         block = "# heading"
@@ -60,6 +62,7 @@ class TestBlockToBlockType(unittest.TestCase):
         self.assertEqual(block_to_block_type(block), BlockType.ORDERED_LIST)
         block = "paragraph"
         self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
 
 class TestMarkdownToHTMLNode(unittest.TestCase):
     def test_paragraph(self):
@@ -159,5 +162,7 @@ the **same** even with inline stuff
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         )
+
+
 if __name__ == "__main__":
     unittest.main()

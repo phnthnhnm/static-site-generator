@@ -3,6 +3,7 @@ from enum import Enum
 import re
 from inline_functions import text_to_textnodes
 
+
 class BlockType(Enum):
     PARAGRAPH = "paragraph"
     HEADING = "heading"
@@ -10,6 +11,7 @@ class BlockType(Enum):
     QUOTE = "quote"
     UNORDERED_LIST = "unordered_list"
     ORDERED_LIST = "ordered_list"
+
 
 def markdown_to_blocks(markdown):
     blocks = markdown.split("\n\n")
@@ -29,22 +31,22 @@ def block_to_block_type(block):
 
     if block.startswith(("# ", "## ", "### ", "#### ", "##### ", "###### ")):
         return BlockType.HEADING
-    
+
     if len(lines) > 1 and lines[0].startswith("```") and lines[-1].startswith("```"):
         return BlockType.CODE
-    
+
     if block.startswith(">"):
         for line in lines:
             if not line.startswith(">"):
                 return BlockType.PARAGRAPH
         return BlockType.QUOTE
-    
+
     if block.startswith("- "):
         for line in lines:
             if not line.startswith("- "):
                 return BlockType.PARAGRAPH
         return BlockType.UNORDERED_LIST
-    
+
     if block.startswith("1. "):
         i = 1
         for line in lines:
@@ -52,7 +54,7 @@ def block_to_block_type(block):
                 return BlockType.PARAGRAPH
             i += 1
         return BlockType.ORDERED_LIST
-    
+
     return BlockType.PARAGRAPH
 
 
@@ -69,7 +71,7 @@ def markdown_to_html_node(markdown):
 
 def block_to_html_node(block):
     block_type = block_to_block_type(block)
-    
+
     match block_type:
         case BlockType.PARAGRAPH:
             return paragraph_to_html_node(block)
@@ -86,6 +88,7 @@ def block_to_html_node(block):
         case _:
             raise ValueError("invalid block type")
 
+
 def text_to_children(text):
     text_nodes = text_to_textnodes(text)
     children = []
@@ -96,12 +99,14 @@ def text_to_children(text):
 
     return children
 
+
 def paragraph_to_html_node(block):
     lines = block.split("\n")
     paragraph = " ".join(lines)
     children = text_to_children(paragraph)
 
     return ParentNode("p", children)
+
 
 def heading_to_html_node(block):
     level = 0
@@ -114,22 +119,24 @@ def heading_to_html_node(block):
 
     if level + 1 >= len(block):
         raise ValueError(f"invalid heading level: {level}")
-    
+
     text = block[level + 1 :]
     children = text_to_children(text)
 
     return ParentNode(f"h{level}", children)
 
+
 def code_to_html_node(block):
     if not block.startswith("```") or not block.endswith("```"):
         raise ValueError("invalid code block")
-    
+
     text = block[4:-3]
     raw_text_node = TextNode(text, TextType.TEXT)
     child = text_node_to_html_node(raw_text_node)
     code = ParentNode("code", [child])
 
     return ParentNode("pre", [code])
+
 
 def ordered_list_to_html_node(block):
     items = block.split("\n")
@@ -153,6 +160,7 @@ def unordered_list_to_html_node(block):
         html_items.append(ParentNode("li", children))
 
     return ParentNode("ul", html_items)
+
 
 def quote_to_html_node(block):
     lines = block.split("\n")
